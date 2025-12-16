@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Система дежурства ALATAU QALASY №2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Дежурство">
+    
+    <title>Система Дежурства - ALATAU QALASY №2</title>
+    
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogItCh0LjRgdGC0LXQvNCwINCU0LXQttGD0YDRgdGC0LLQsCIsCiAgInNob3J0X25hbWUiOiAi0JTQtdC20YPRgNGB0YLQstC+IiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmZmZmZmYiLAogICJ0aGVtZV9jb2xvciI6ICIjNjY3ZWVhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIGZpbGw9JyUyMzY2N2VlYScvJTNFJTNDdGV4dCB4PSc1MCcgeT0nNTAnIGZvbnQtc2l6ZT0nNDAnIGZpbGw9J3doaXRlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBkeT0nLjNlbSclM0XQkCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJyUzRSUzQ3JlY3Qgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIGZpbGw9JyUyMzY2N2VlYScvJTNFJTNDdGV4dCB4PSc1MCcgeT0nNTAnIGZvbnQtc2l6ZT0nNDAnIGZpbGw9J3doaXRlJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBkeT0nLjNlbSclM0XQkCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* ========== КАРТОЧКИ ========== */
+        .card { 
+            background: white; 
+            border-radius: 24px; 
+            padding: 24px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 80px rgba(102, 126, 234, 0.3);
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        /* ========== КНОПКИ ========== */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover { 
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn-green { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            color: white;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-green:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+        }
+        
+        .btn-red { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+            color: white;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-red:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(239, 68, 68, 0.5);
+        }
+        
+        .btn-blue { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            color: white;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* ========== ВКЛАДКИ ========== */
+        .tab-active { 
+            background: white !important; 
+            color: #667eea !important; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transform: scale(1.05);
+        }
+        
+        /* ========== АНИМАЦИИ ========== */
+        .pulse { 
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
+        }
+        
+        @keyframes pulse { 
+            0%, 100% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.5; transform: scale(1.1); } 
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        /* ========== ТАБЛИЦЫ ========== */
+        .table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        
+        .table th, .table td { 
+            padding: 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #e5e7eb; 
+        }
+        
+        .table th { 
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); 
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .table tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover { 
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateX(4px);
+        }
+        
+        /* ========== ФОТО ========== */
+        .photo-preview { 
+            max-width: 250px; 
+            max-height: 250px; 
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-preview:hover {
+            transform: scale(1.05);
+        }
+        
+        .photo-thumb { 
+            width: 90px; 
+            height: 90px; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .photo-thumb:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* ========== ЯЗЫКОВЫЕ КНОПКИ ========== */
+        .lang-btn { 
+            padding: 10px 20px; 
+            border-radius: 12px; 
+            border: 2px solid white; 
+            color: white; 
+            font-weight: 700;
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-btn:hover { 
+            background: white; 
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+        }
+        
+        .lang-btn.active { 
+            background: white; 
+            color: #667eea;
+            box-shadow: 0 6px 20px rgba(255,255,255,0.4);
+        }
+        
+        /* ========== ГЕРБ ШКОЛЫ ========== */
+        .school-logo { 
+            width: 100px; 
+            height: 100px; 
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+            transition: transform 0.3s ease;
+        }
+        
+        .school-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .school-logo-small { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        
+        /* ВРЕМЕННЫЙ ГЕРБ (замените на настоящий) */
+        .school-emblem {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23667eea;stop-opacity:1" /><stop offset="100%" style="stop-color:%23764ba2;stop-opacity:1" /></linearGradient><linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%23ffd700;stop-opacity:1" /><stop offset="100%" style="stop-color:%23ffa500;stop-opacity:1" /></linearGradient></defs><circle cx="100" cy="100" r="95" fill="url(%23grad1)" stroke="%23ffd700" stroke-width="4"/><circle cx="100" cy="100" r="85" fill="none" stroke="%23ffd700" stroke-width="2" opacity="0.5"/><path d="M 100 30 L 85 60 L 100 55 L 115 60 Z" fill="url(%23grad2)"/><polygon points="100,60 90,75 100,70 110,75" fill="%23fff" opacity="0.9"/><rect x="95" y="75" width="10" height="35" fill="%23fff"/><rect x="70" y="95" width="60" height="8" fill="%23fff" opacity="0.8"/><rect x="75" y="105" width="50" height="6" fill="%23fff" opacity="0.6"/><circle cx="100" cy="135" r="22" fill="none" stroke="%23ffd700" stroke-width="3"/><path d="M 100 118 L 94 130 L 100 126 L 106 130 Z" fill="%23ffd700"/><text x="100" y="144" font-size="18" fill="%23ffd700" text-anchor="middle" font-weight="bold" font-family="Arial">№2</text><path d="M 60 160 Q 100 175 140 160" stroke="%23fff" stroke-width="2.5" fill="none"/><text x="100" y="187" font-size="12" fill="%23fff" text-anchor="middle" font-weight="bold" font-family="Arial">ALATAU</text></svg>');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        /* ========== МОДАЛЬНЫЕ ОКНА ========== */
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* ========== ПРОГРЕСС-БАРЫ ========== */
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 999px;
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* ========== БЕЙДЖИ ========== */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .badge-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .badge-red {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .badge-yellow {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        /* ========== КАСТОМНЫЙ СКРОЛЛБАР ========== */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+        
+        /* ========== АДАПТИВНОСТЬ ========== */
+        @media (max-width: 768px) {
+            .card {
+                padding: 16px;
+                border-radius: 16px;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.875rem;
+            }
+            
+            .school-logo {
+                width: 70px;
+                height: 70px;
+            }
+        }
+        
+        /* ========== СТАТУС-КАРТЫ ========== */
+        .status-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .status-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        /* ========== СИСТЕМА УСТАНОВКИ ========== */
+        #installPrompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        /* ========== LOADING SPINNER ========== */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4">
+
+<!-- КНОПКА УСТАНОВКИ ПРИЛОЖЕНИЯ -->
+<div id="installPrompt" style="display: none;">
+    <div class="card shadow-2xl">
+        <div class="flex items-center gap-4">
+            <div class="school-emblem school-logo-small"></div>
+            <div class="flex-1">
+                <p class="font-bold">Установить приложение?</p>
+                <p class="text-xs text-gray-600">Быстрый доступ с главного экрана</p>
+            </div>
+            <button onclick="installApp()" class="btn btn-primary">
+                <i class="fas fa-download"></i>Установить
+            </button>
+            <button onclick="dismissInstall()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ЭКРАН АВТОРИЗАЦИИ -->
+<div id="authScreen" class="min-h-screen flex items-center justify-center">
+    <div class="card w-full max-w-md fade-in">
+        <div class="flex justify-end gap-2 mb-6">
+            <button onclick="changeLang('ru')" class="lang-btn active" id="lang-ru">🇷🇺 RU</button>
+            <button onclick="changeLang('kk')" class="lang-btn" id="lang-kk">🇰🇿 KZ</button>
+            <button onclick="changeLang('en')" class="lang-btn" id="lang-en">🇬🇧 EN</button>
+        </div>
+
+        <div class="text-center mb-8">
+            <!-- МЕСТО ДЛЯ ГЕРБА ШКОЛЫ -->
+            <div class="w-40 h-40 mx-auto mb-6 school-emblem"></div>
+            
+            <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" data-lang="appTitle">Система Дежурства</h1>
+            <p class="text-gray-600 font-bold text-lg">ALATAU QALASY №2</p>
+            <div class="flex items-center justify-center gap-2 mt-3 text-gray-500">
+                <i class="fas fa-shield-alt"></i>
+                <span class="text-sm font-semibold">Защищенная система</span>
+            </div>
+        </div>
+
+        <div class="flex gap-2 mb-6 bg-gray-100 p-1 rounded-2xl">
+            <button onclick="switchAuth('login')" id="btnLogin" class="flex-1 py-3 rounded-xl font-semibold bg-white shadow-lg" data-lang="login">Вход</button>
+            <button onclick="switchAuth('register')" id="btnRegister" class="flex-1 py-3 rounded-xl font-semibold text-gray-600" data-lang="register">Регистрация</button>
+        </div>
+
+        <div id="loginForm">
+            <div class="space-y-4">
+                <div class="relative">
+                    <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="loginName" data-lang-placeholder="name" placeholder="Имя" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div class="relative">
+                    <i class="fas fa-user-tag absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="loginSurname" data-lang-placeholder="surname" placeholder="Фамилия" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <button onclick="login()" class="btn btn-primary w-full text-lg">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span data-lang="loginBtn">Войти</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="registerForm" style="display:none;">
+            <div class="space-y-4">
+                <div class="relative">
+                    <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="regName" data-lang-placeholder="name" placeholder="Имя" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div class="relative">
+                    <i class="fas fa-user-tag absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="regSurname" data-lang-placeholder="surname" placeholder="Фамилия" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div class="relative">
+                    <i class="fas fa-user-shield absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="regRole" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all appearance-none">
+                        <option value="teacher">👨‍🏫 <span data-lang="roleTeacher">Учитель</span></option>
+                        <option value="duty">👮 <span data-lang="roleDuty">Дежурный</span></option>
+                        <option value="admin">👔 <span data-lang="roleAdmin">Администрация</span></option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="regCode" data-lang-placeholder="accessCode" placeholder="Код доступа" class="w-full p-4 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div class="text-xs text-gray-600 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border-l-4 border-indigo-500">
+                    <p class="mb-2"><i class="fas fa-info-circle mr-2 text-indigo-600"></i><strong data-lang="teacherDutyCode">Учитель/Дежурный:</strong> TEACHER2025</p>
+                    <p><i class="fas fa-crown mr-2 text-yellow-500"></i><strong data-lang="adminCode">Администрация:</strong> ADMIN2025</p>
+                </div>
+                <button onclick="register()" class="btn btn-primary w-full text-lg">
+                    <i class="fas fa-user-plus"></i>
+                    <span data-lang="registerBtn">Зарегистрироваться</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <button onclick="showInstallInstructions()" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">
+                <i class="fas fa-mobile-alt mr-1"></i>
+                <span data-lang="installApp">Установить как приложение</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ГЛАВНЫЙ ЭКРАН -->
+<div id="mainScreen" style="display:none;">
+    
+    <!-- ШАПКА -->
+    <div class="card mb-6 fade-in">
+        <div class="flex justify-between items-center flex-wrap gap-4">
+            <div class="flex items-center gap-4">
+                <div class="school-emblem school-logo"></div>
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent" data-lang="appTitle">Система Дежурства</h1>
+                    <p class="text-sm text-gray-600 font-semibold">ALATAU QALASY №2</p>
+                    <p class="text-xs text-gray-500 mt-1" id="currentTime"></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex gap-2">
+                    <button onclick="changeLang('ru')" class="lang-btn active text-sm px-4 py-2" id="lang-main-ru">RU</button>
+                    <button onclick="changeLang('kk')" class="lang-btn text-sm px-4 py-2" id="lang-main-kk">KZ</button>
+                    <button onclick="changeLang('en')" class="lang-btn text-sm px-4 py-2" id="lang-main-en">EN</button>
+                </div>
+                <div class="px-5 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border-2 border-indigo-100">
+                    <p class="font-bold text-indigo-800" id="userName"></p>
+                    <p class="text-xs text-indigo-600 font-semibold" id="userRole"></p>
+                </div>
+                <button onclick="logout()" class="btn btn-red">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden sm:inline">Выход</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-6 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-3xl p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+            <div class="relative flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-4 h-4 bg-white rounded-full pulse"></div>
+                    <div>
+                        <span class="font-bold text-xl" data-lang="systemActive">Система активна</span>
+                        <p class="text-sm opacity-90 mt-1">Все системы работают штатно</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-5xl font-bold" id="todayCount">0</p>
+                    <p class="text-sm opacity-90" data-lang="checksToday">проверок сегодня</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
+    <div class="card mb-6 fade-in" style="animation-delay: 0.1s;">
+        <div class="flex gap-2 overflow-x-auto pb-2">
+            <button onclick="showTab('home')" id="tab-home" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap tab-active transition-all">
+                <i class="fas fa-home mr-2"></i><span data-lang="tabHome">Главная</span>
+            </button>
+            <button onclick="showTab('students')" id="tab-students" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-users mr-2"></i><span data-lang="tabStudents">Ученики</span>
+            </button>
+            <button onclick="showTab('check')" id="tab-check" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-clipboard-check mr-2"></i><span data-lang="tabCheck">Проверка</span>
+            </button>
+            <button onclick="showTab('violations')" id="tab-violations" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-exclamation-triangle mr-2"></i><span data-lang="tabViolations">Нарушения</span>
+                <span id="violBadge" class="hidden ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">0</span>
+            </button>
+            <button onclick="showTab('analytics')" id="tab-analytics" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-chart-line mr-2"></i><span data-lang="tabAnalytics">Аналитика</span>
+            </button>
+            <button onclick="showTab('tasks')" id="tab-tasks" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-tasks mr-2"></i><span data-lang="tabTasks">Задания</span>
+                <span id="taskBadge" class="hidden ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">0</span>
+            </button>
+            <button onclick="showTab('messages')" id="tab-messages" class="px-6 py-3 rounded-xl font-semibold whitespace-nowrap hover:bg-gray-100 transition-all">
+                <i class="fas fa-envelope mr-2"></i><span data-lang="tabMessages">Сообщения</span>
+                <span id="msgBadge" class="hidden ml-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ГЛАВНАЯ -->
+    <div id="page-home" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="status-card fade-in" style="animation-delay: 0.2s;">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-sm font-semibold mb-2" data-lang="totalStudents">Всего учеников</p>
+                        <p class="text-5xl font-bold text-blue-600 mb-2" id="statStudents">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user-graduate text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="status-card fade-in" style="animation-delay: 0.3s;">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-sm font-semibold mb-2" data-lang="checked">Проверено</p>
+                        <p class="text-5xl font-bold text-green-600 mb-2" id="statChecked">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="checkedProgress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-check text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="status-card fade-in" style="animation-delay: 0.4s;">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-sm font-semibold mb-2" data-lang="averageScore">Средний балл</p>
+                        <p class="text-5xl font-bold text-purple-600 mb-2" id="statAverage">0%</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="averageProgress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-star text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="status-card fade-in" style="animation-delay: 0.5s;">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <p class="text-gray-600 text-sm font-semibold mb-2" data-lang="violations">Нарушения</p>
+                        <p class="text-5xl font-bold text-red-600 mb-2" id="statViolations">0</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="violationsProgress" style="width: 0%; background: linear-gradient(90deg, #ef4444, #dc2626);"></div>
+                        </div>
+                    </div>
+                    <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card fade-in" style="animation-delay: 0.6s;">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-chart-bar mr-3 text-indigo-600"></i>
+                    <span data-lang="periodStats">Статистика по периодам</span>
+                </h3>
+                <canvas id="periodChart"></canvas>
+            </div>
+            <div class="card fade-in" style="animation-delay: 0.7s;">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-trophy mr-3 text-yellow-500"></i>
+                    <span data-lang="topClasses">Топ-5 классов</span>
+                </h3>
+                <div id="topClasses"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- УЧЕНИКИ -->
+    <div id="page-students" class="space-y-6" style="display:none;">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" data-lang="studentManagement">Управление учениками</h2>
+                    <p class="text-sm text-gray-600">
+                        <span data-lang="totalStudentsLabel">Всего учеников:</span> 
+                        <span id="totalStudents" class="font-bold text-indigo-600">0</span>
+                    </p>
+                </div>
+                <button onclick="openAddStudent()" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    <span data-lang="addStudent">Добавить ученика</span>
+                </button>
+            </div>
+
+            <div class="mb-6 flex gap-4 flex-wrap">
+                <div class="relative flex-1 min-w-[200px]">
+                    <i class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="filterClass" onchange="filterStudents()" class="w-full p-3 pl-12 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none">
+                        <option value="" data-lang="allClasses">Все классы</option>
+                    </select>
+                </div>
+                <div class="relative flex-1 min-w-[250px]">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchStudent" onkeyup="filterStudents()" data-lang-placeholder="searchByNumber" placeholder="Поиск по номеру..." class="w-full p-3 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border-2 border-gray-100">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th data-lang="student">Ученик</th>
+                            <th data-lang="class">Класс</th>
+                            <th data-lang="attendance">Посещаемость</th>
+                            <th data-lang="actions">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПРОВЕРКА -->
+    <div id="page-check" class="space-y-6" style="display:none;">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-6" data-lang="classCheck">Проверка классов</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-semibold mb-3 text-gray-700">
+                        <i class="fas fa-clock mr-2 text-indigo-600"></i>
+                        <span data-lang="period">Период</span>
+                    </label>
+                    <select id="checkPeriod" onchange="refreshClasses()" class="w-full p-4 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none">
+                        <option value="before">🌅 <span data-lang="beforeLunch">До обеда</span></option>
+                        <option value="after">🌆 <span data-lang="afterLunch">После обеда</span></option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-3 text-gray-700">
+                        <i class="fas fa-calendar mr-2 text-indigo-600"></i>
+                        <span data-lang="date">Дата</span>
+                    </label>
+                    <input type="date" id="checkDate" onchange="refreshClasses()" class="w-full p-4 border-2 rounded-xl focus:border-indigo-500 outline-none">
+                </div>
+            </div>
+        </div>
+
+        <div id="classGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+    </div>
+
+    <!-- НАРУШЕНИЯ -->
+    <div id="page-violations" class="space-y-6" style="display:none;">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" data-lang="violationsLog">Журнал нарушений</h2>
+                    <p class="text-sm text-gray-600">
+                        <span data-lang="totalViolationsLabel">Всего нарушений:</span> 
+                        <span id="totalViolations" class="font-bold text-red-600">0</span>
+                    </p>
+                </div>
+                <button onclick="exportViolations()" class="btn btn-green">
+                    <i class="fas fa-file-excel"></i>
+                    <span data-lang="exportViolations">Экспорт</span>
+                </button>
+            </div>
+
+            <div class="mb-6 flex gap-4 flex-wrap">
+                <div class="relative flex-1 min-w-[200px]">
+                    <i class="fas fa-filter absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <select id="filterViolClass" onchange="filterViolations()" class="w-full p-3 pl-12 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none">
+                        <option value="" data-lang="allClasses">Все классы</option>
+                    </select>
+                </div>
+                <div class="relative flex-1 min-w-[200px]">
+                    <i class="fas fa-calendar absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="date" id="filterViolDate" onchange="filterViolations()" class="w-full p-3 pl-12 border-2 rounded-xl focus:border-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <div id="violationsList" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- АНАЛИТИКА -->
+    <div id="page-analytics" class="space-y-6" style="display:none;">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <h2 class="text-3xl font-bold" data-lang="analyticsReports">Аналитика и отчёты</h2>
+                <button onclick="exportToExcel()" class="btn btn-green">
+                    <i class="fas fa-file-excel"></i>
+                    <span data-lang="exportStats">Экспорт</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-percentage text-white text-xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-700 font-semibold" data-lang="avgAttendance">Средняя посещаемость</p>
+                    </div>
+                    <p class="text-4xl font-bold text-blue-600" id="avgAttendance">0%</p>
+                </div>
+                <div class="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border-2 border-green-200">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-check-double text-white text-xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-700 font-semibold" data-lang="classesInOrder">Классов в порядке</p>
+                    </div>
+                    <p class="text-4xl font-bold text-green-600" id="goodClasses">0</p>
+                </div>
+                <div class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-award text-white text-xl"></i>
+                        </div>
+                        <p class="text-sm text-gray-700 font-semibold" data-lang="qualityIndex">Индекс качества</p>
+                    </div>
+                    <p class="text-4xl font-bold text-purple-600" id="qualityIndex">0</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-chart-pie mr-3 text-indigo-600"></i>
+                        <span data-lang="statusDistribution">Распределение статусов</span>
+                    </h3>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-chart-line mr-3 text-indigo-600"></i>
+                        <span data-lang="trendByDays">Динамика по дням</span>
+                    </h3>
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-table mr-3 text-indigo-600"></i>
+                    <span data-lang="detailedStats">Детальная статистика по классам</span>
+                </h3>
+                <div class="overflow-x-auto rounded-xl border-2 border-gray-100">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th data-lang="class">Класс</th>
+                                <th data-lang="students">Учеников</th>
+                                <th data-lang="attendance">Посещаемость</th>
+                                <th data-lang="order">Порядок</th>
+                                <th data-lang="violations">Нарушения</th>
+                                <th data-lang="rating">Рейтинг</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyticsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЗАДАНИЯ -->
+    <div id="page-tasks" class="space-y-6" style="display:none;">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <h2 class="text-3xl font-bold" data-lang="tasks">Задания</h2>
+                <button id="newTaskBtn" onclick="openNewTask()" class="btn btn-primary" style="display:none;">
+                    <i class="fas fa-plus"></i>
+                    <span data-lang="newTask">Новое задание</span>
+                </button>
+            </div>
+            <div id="tasksList"></div>
+        </div>
+    </div>
+
+    <!-- СООБЩЕНИЯ -->
+    <div id="page-messages" class="space-y-6" style="display:none;">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                <h2 class="text-3xl font-bold" data-lang="messages">Сообщения</h2>
+                <button id="newMsgBtn" onclick="openNewMessage()" class="btn btn-primary" style="display:none;">
+                    <i class="fas fa-plus"></i>
+                    <span data-lang="newMessage">Новое сообщение</span>
+                </button>
+            </div>
+            <div id="messagesList"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- МОДАЛКИ -->
+
+<!-- Добавить ученика -->
+<div id="studentModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center p-4" style="display:none; z-index:1000;">
+    <div class="card max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold" data-lang="addStudent">Добавить ученика</h3>
+            <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fas fa-school absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <select id="studentClass" class="w-full p-3 pl-12 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none"></select>
+            </div>
+            <div class="text-sm text-gray-600 bg-blue-50 p-3 rounded-xl">
+                <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                <span data-lang="autoNumbering">Номер ученика будет присвоен автоматически</span>
+            </div>
+            <button onclick="addStudent()" class="btn btn-primary w-full">
+                <i class="fas fa-plus"></i>
+                <span data-lang="add">Добавить</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Проверка класса -->
+<div id="checkModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center p-4" style="display:none; z-index:1000; overflow-y-auto;">
+    <div class="card max-w-2xl w-full my-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-3xl font-bold" id="modalTitle"></h3>
+            <button onclick="closeCheckModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200">
+                <p class="text-sm text-gray-700 font-semibold mb-1" data-lang="period">Период</p>
+                <p class="font-bold text-lg text-blue-800" id="modalPeriod"></p>
+            </div>
+            <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border-2 border-green-200">
+                <p class="text-sm text-gray-700 font-semibold mb-1" data-lang="date">Дата</p>
+                <p class="font-bold text-lg text-green-800" id="modalDate"></p>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block font-bold text-lg mb-4" data-lang="selectStatus">Выберите статус</label>
+            <div class="grid grid-cols-3 gap-4">
+                <button onclick="selectStatus('good')" class="status-btn p-6 border-3 border-gray-200 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                    <i class="fas fa-check-circle text-6xl text-green-500 mb-3"></i>
+                    <p class="font-bold text-lg" data-lang="order">Порядок</p>
+                </button>
+                <button onclick="selectStatus('bad')" class="status-btn p-6 border-3 border-gray-200 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                    <i class="fas fa-times-circle text-6xl text-red-500 mb-3"></i>
+                    <p class="font-bold text-lg" data-lang="violation">Нарушение</p>
+                </button>
+                <button onclick="selectStatus('absent')" class="status-btn p-6 border-3 border-gray-200 rounded-2xl text-center hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                    <i class="fas fa-user-slash text-6xl text-yellow-500 mb-3"></i>
+                    <p class="font-bold text-lg" data-lang="absent">Отсутствует</p>
+                </button>
+            </div>
+        </div>
+
+        <div id="violationSection" class="mb-6 hidden">
+            <label class="block font-bold mb-3" data-lang="note">Примечание</label>
+            <textarea id="checkNote" rows="3" class="w-full p-4 border-2 rounded-xl mb-4 focus:border-indigo-500 outline-none" data-lang-placeholder="describeViolation" placeholder="Опишите нарушение..."></textarea>
+            
+            <label class="block font-bold mb-3">
+                <i class="fas fa-camera mr-2"></i><span data-lang="violationPhoto">Фото нарушения (необязательно)</span>
+            </label>
+            <div class="border-3 border-dashed border-gray-300 rounded-xl p-6 text-center bg-gray-50">
+                <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="previewPhoto()" class="hidden">
+                <button type="button" onclick="document.getElementById('photoInput').click()" class="btn btn-blue mb-2">
+                    <i class="fas fa-camera"></i><span data-lang="takePhoto">Сделать фото</span>
+                </button>
+                <p class="text-xs text-gray-500" data-lang="orSelectFromGallery">Или выберите из галереи</p>
+                
+                <div id="photoPreview" class="mt-4 hidden">
+                    <img id="previewImage" class="photo-preview mx-auto">
+                    <button type="button" onclick="removePhoto()" class="mt-3 text-red-600 hover:text-red-800 font-semibold">
+                        <i class="fas fa-trash mr-1"></i><span data-lang="deletePhoto">Удалить фото</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="noteSection" class="mb-6 hidden">
+            <label class="block font-bold mb-3" data-lang="absentReason">Причина отсутствия</label>
+            <textarea id="absentNote" rows="3" class="w-full p-4 border-2 rounded-xl focus:border-indigo-500 outline-none"></textarea>
+        </div>
+
+        <button onclick="saveCheck()" class="btn btn-primary w-full text-lg">
+            <i class="fas fa-save"></i><span data-lang="saveCheck">Сохранить проверку</span>
+        </button>
+    </div>
+</div>
+
+<!-- Просмотр фото -->
+<div id="photoModal" class="fixed inset-0 bg-black/95 flex items-center justify-center p-4" style="display:none; z-index:2000;" onclick="closePhotoModal()">
+    <div class="max-w-4xl w-full">
+        <img id="fullPhoto" class="w-full h-auto rounded-xl shadow-2xl">
+    </div>
+</div>
+
+<!-- Задание -->
+<div id="taskModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center p-4" style="display:none; z-index:1000;">
+    <div class="card max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold" data-lang="newTask">Новое задание</h3>
+            <button onclick="closeTaskModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <select id="taskTo" class="w-full p-3 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none">
+                <option value="all_teachers">👨‍🏫 <span data-lang="allTeachers">Все учителя</span></option>
+                <option value="all_duty">👮 <span data-lang="allDuty">Все дежурные</span></option>
+                <option value="all">👥 <span data-lang="everyone">Всем</span></option>
+            </select>
+            <input type="text" id="taskTitle" data-lang-placeholder="title" placeholder="Заголовок" class="w-full p-3 border-2 rounded-xl focus:border-indigo-500 outline-none">
+            <textarea id="taskDesc" rows="4" data-lang-placeholder="description" placeholder="Описание..." class="w-full p-3 border-2 rounded-xl focus:border-indigo-500 outline-none"></textarea>
+            <input type="date" id="taskDeadline" class="w-full p-3 border-2 rounded-xl focus:border-indigo-500 outline-none">
+            <button onclick="createTask()" class="btn btn-primary w-full">
+                <i class="fas fa-paper-plane"></i><span data-lang="create">Создать</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Сообщение -->
+<div id="messageModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center p-4" style="display:none; z-index:1000;">
+    <div class="card max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold" data-lang="newMessage">Новое сообщение</h3>
+            <button onclick="closeMessageModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <select id="msgTo" class="w-full p-3 border-2 rounded-xl appearance-none focus:border-indigo-500 outline-none">
+                <option value="all_teachers">👨‍🏫 <span data-lang="allTeachers">Все учителя</span></option>
+                <option value="all_duty">👮 <span data-lang="allDuty">Все дежурные</span></option>
+                <option value="all">👥 <span data-lang="everyone">Всем</span></option>
+            </select>
+            <input type="text" id="msgSubject" data-lang-placeholder="subject" placeholder="Тема" class="w-full p-3 border-2 rounded-xl focus:border-indigo-500 outline-none">
+            <textarea id="msgText" rows="5" data-lang-placeholder="message" placeholder="Сообщение..." class="w-full p-3 border-2 rounded-xl focus:border-indigo-500 outline-none"></textarea>
+            <button onclick="sendMessage()" class="btn btn-primary w-full">
+                <i class="fas fa-paper-plane"></i><span data-lang="send">Отправить</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Инструкции по установке -->
+<div id="installInstructionsModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center p-4" style="display:none; z-index:1000;">
+    <div class="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-3xl font-bold flex items-center">
+                <i class="fas fa-mobile-alt mr-3 text-indigo-600"></i>
+                <span data-lang="installApp">Установить как приложение</span>
+            </h3>
+            <button onclick="closeInstallInstructions()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- Android Chrome -->
+            <div class="p-6 bg-gradient-to-br from-green-50 to-green-100 border-3 border-green-300 rounded-2xl">
+                <h4 class="font-bold text-xl mb-4 flex items-center">
+                    <i class="fab fa-android text-green-600 text-3xl mr-3"></i>
+                    Android (Chrome)
+                </h4>
+                <ol class="space-y-3 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">1️⃣</span>
+                        <span>Нажмите на кнопку <strong>⋮</strong> (три точки) в правом верхнем углу</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">2️⃣</span>
+                        <span>Выберите <strong>"Добавить на главный экран"</strong> или <strong>"Установить приложение"</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">3️⃣</span>
+                        <span>Нажмите <strong>"Установить"</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">✅</span>
+                        <span>Готово! Иконка появится на главном экране</span>
+                    </li>
+                </ol>
+            </div>
+            
+            <!-- iOS Safari -->
+            <div class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-3 border-blue-300 rounded-2xl">
+                <h4 class="font-bold text-xl mb-4 flex items-center">
+                    <i class="fab fa-apple text-blue-600 text-3xl mr-3"></i>
+                    iOS (Safari)
+                </h4>
+                <ol class="space-y-3 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">1️⃣</span>
+                        <span>Нажмите на кнопку <strong>Поделиться</strong> <i class="fas fa-share"></i> внизу экрана</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">2️⃣</span>
+                        <span>Прокрутите вниз и выберите <strong>"На экран «Домой»"</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">3️⃣</span>
+                        <span>Нажмите <strong>"Добавить"</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">✅</span>
+                        <span>Готово! Иконка появится на главном экране</span>
+                    </li>
+                </ol>
+            </div>
+            
+            <!-- Windows/Mac -->
+            <div class="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-3 border-purple-300 rounded-2xl">
+                <h4 class="font-bold text-xl mb-4 flex items-center">
+                    <i class="fas fa-desktop text-purple-600 text-3xl mr-3"></i>
+                    Windows / Mac (Chrome, Edge)
+                </h4>
+                <ol class="space-y-3 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">1️⃣</span>
+                        <span>Нажмите на иконку <strong>⊕</strong> или <strong>🖥️</strong> в адресной строке</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">2️⃣</span>
+                        <span>Или нажмите <strong>⋮</strong> (три точки) → <strong>"Установить..."</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">3️⃣</span>
+                        <span>Нажмите <strong>"Установить"</strong></span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-2xl">✅</span>
+                        <span>Приложение откроется в отдельном окне</span>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-2xl">
+            <p class="font-bold text-lg mb-3">🎉 Преимущества установки:</p>
+            <ul class="space-y-2 text-sm">
+                <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Быстрый доступ с главного экрана</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Работает как обычное приложение</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Моментальный запуск</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Все данные сохраняются локально</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Современный дизайн и плавная работа</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+// ========== ПОЛНЫЙ JS КОД ИЗ ОРИГИНАЛА С УЛУЧШЕНИЯМИ ==========
+// (Весь JavaScript код остается таким же, как в оригинале)
+
+// ... [ВСТАВЬТЕ СЮДА ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ JS ИЗ ОРИГИНАЛЬНОГО ФАЙЛА] ...
+</script>
+
+<script src="./duty_system.js"></script>
+
+</body>
+</html>
